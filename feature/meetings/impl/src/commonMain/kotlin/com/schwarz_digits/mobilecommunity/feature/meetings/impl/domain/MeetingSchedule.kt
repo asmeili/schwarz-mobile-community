@@ -25,4 +25,13 @@ data class MeetingSchedule(
 fun scheduleOf(
     meetings: List<Meeting>,
     now: Instant,
-): MeetingSchedule = TODO("Group the meetings into next, upcoming and past")
+): MeetingSchedule {
+    val (past, notEnded) = meetings.partition { it.endsAt <= now }
+    val sorted = notEnded.sortedBy { it.startsAt }
+
+    return MeetingSchedule(
+        next = sorted.firstOrNull(),
+        upcoming = sorted.drop(1),
+        past = past.sortedByDescending { it.startsAt },
+    )
+}
